@@ -1,30 +1,25 @@
 ﻿namespace ReverseSinglyLinkedList
 {
     public class Solution {
-        public ListNode ReverseList(ListNode head) {
+        public ListNode ReverseList(ListNode? head) {
 
-            if (head == null || head.next == null)
+            if (head?.next == null)
             {
                 return head;
             }
-
-            var List = new List<ListNode>();
-            ListNode? curr = head;
-            while (curr != null)
+            
+            
+            ListNode? curr = null;
+            ListNode? prev = null;
+            while (head != null)
             {
-                List.Add(curr);
-                curr = curr.next;
+                prev = curr;
+                curr = head;
+                head = head.next;
+                curr.next = prev;
             }
 
-            List.Reverse();
-            for (int i = 0; i < List.Count - 1; i++)
-            {
-                List[i].next = List[i + 1];
-            }
-
-            List[^1].next = null;
-
-            return List.First();
+            return curr;
         }
     }
 
