@@ -3,10 +3,10 @@
 public class TreeNode
 {
     public int val;
-    public TreeNode left;
-    public TreeNode right;
+    public TreeNode? left;
+    public TreeNode? right;
 
-    public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
+    public TreeNode(int val = 0, TreeNode? left = null, TreeNode? right = null)
     {
         this.val = val;
         this.left = left;
@@ -20,22 +20,29 @@ public class TreeNode
             return true;
         }
 
-        return IsSymmetric(root.left, root.right);
-    }
-    
-    private bool IsSymmetric(TreeNode? left, TreeNode? right)
-    {
-        if (left is null && right is null)
+        var stack = new Stack<(TreeNode?, TreeNode?)>();
+        stack.Push((root.left, root.right));
+        
+        while (stack.Count > 0)
         {
-            return true;
-        }
-        if (left is null || right is null)
-        {
-            return false;
+            var (left, right) = stack.Pop();
+            if (left is null && right is null)
+            {
+                continue;
+            }
+            if (left is null || right is null)
+            {
+                return false;
+            }
+            if (left.val != right.val)
+            {
+                return false;
+            }
+            
+            stack.Push((left.left, right.right));
+            stack.Push((left.right, right.left));
         }
 
-        return left.val == right.val
-               && IsSymmetric(left.left, right.right)
-               && IsSymmetric(left.right, right.left);
+        return true;
     }
 }
