@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace MinStack
 {
+    // https://leetcode.com/problems/min-stack/
     public class MinStack {
         private Stack<int> Stack { get; }
         private Stack<int> MinimumsStack { get; }
