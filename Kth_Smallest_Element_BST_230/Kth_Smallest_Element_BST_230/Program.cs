@@ -3,8 +3,6 @@
 var node = new TreeNode(4, new TreeNode(2), new TreeNode(5));
 const int k = 1;
 
-var values = new List<int>();
+var kthSmallest = TreeNode.KthSmallest(node, k);
 
-TreeNode.InOrderTraversal(node, val => values.Add(val));
-
-Console.WriteLine(values[k-1]);
+Console.WriteLine(kthSmallest);

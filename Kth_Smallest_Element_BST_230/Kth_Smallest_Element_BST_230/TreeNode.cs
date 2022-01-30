@@ -12,13 +12,28 @@ public class TreeNode
         this.right = right;
     }
 
-    public static void InOrderTraversal(TreeNode? node, Action<int> action)
+    public static int KthSmallest(TreeNode? node, int k)
     {
-        if (node is not null)
+        var stack = new Stack<TreeNode?>();
+        var root = node;
+
+        while (true)
         {
-            InOrderTraversal(node.left, action);
-            action(node.val);
-            InOrderTraversal(node.right, action);
+            // спускаемся к самому левому потомку
+            while (root != null)
+            {
+                stack.Push(root);
+                root = root.left;
+            }
+
+            root = stack.Pop();
+            if (--k == 0)
+            {
+                return root!.val;
+            }
+            
+            // ищем в правом потомке
+            root = root!.right;
         }
     }
 }
