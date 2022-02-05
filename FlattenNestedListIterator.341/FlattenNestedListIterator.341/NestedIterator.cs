@@ -2,45 +2,75 @@
 
 public class NestedIterator
 {
-    private int Position { get; set; } = -1;
-    private List<int> FlattenedList { get; }
-
-    public NestedIterator(IList<NestedInteger> nestedList) {
-        FlattenedList = new List<int>();
-        
-        foreach (var nestedInteger in nestedList)
+    private class ListPosition
+    {
+        public IList<NestedInteger> List { get; set; }
+        public int NextPosition { get; set; }
+        public ListPosition(IList<NestedInteger> list, int nextPosition)
         {
-            FlattenList(nestedInteger);
+            List = list;
+            NextPosition = nextPosition;
         }
     }
 
-    private void FlattenList(NestedInteger nestedInteger)
+    private Stack<ListPosition> Positions { get; set; } = new();
+
+    private int Current { get; set; }
+    private bool CurrentFilled { get; set; } = false;
+
+    public NestedIterator(IList<NestedInteger> nestedList) {
+        Positions.Push(new ListPosition(nestedList, 0));
+    }
+
+    private void FillCurrent()
     {
-        if (nestedInteger.IsInteger())
+        if (CurrentFilled)
         {
-            FlattenedList.Add(nestedInteger.GetInteger());
             return;
         }
 
-        var list = nestedInteger.GetList();
-        foreach (var next in list)
+        while (true)
         {
-            FlattenList(next);
+            if (Positions.Count < 1)
+            {
+                return;
+            }
+            
+            var list = Positions.Peek().List;
+            var nextPosition = Positions.Peek().NextPosition;
+            
+            if (nextPosition >= list.Count)
+            {
+                Positions.Pop();
+                continue;
+            }
+
+            if (list[nextPosition].IsInteger())
+            {
+                Current = list[nextPosition].GetInteger();
+                CurrentFilled = true;
+                Positions.Peek().NextPosition++;
+                return;
+            }
+            Positions.Peek().NextPosition++;
+            Positions.Push(new ListPosition(list[nextPosition].GetList(), 0));
         }
     }
-
     public bool HasNext()
     {
-        return Position < FlattenedList.Count - 1;
+        FillCurrent();
+        return CurrentFilled;
     }
 
     public int Next() {
-        if (HasNext())
+        FillCurrent();
+        
+        if (CurrentFilled)
         {
-            Position++;
-            return FlattenedList[Position];
+            CurrentFilled = false;
+            return Current;
         }
 
-        return Int32.MinValue;
+        throw new InvalidOperationException();
     }
 }
