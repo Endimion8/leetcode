@@ -2,73 +2,39 @@
 
 public class NestedIterator
 {
-    private class ListPosition
-    {
-        public IList<NestedInteger> List { get; set; }
-        public int NextPosition { get; set; }
-        public ListPosition(IList<NestedInteger> list, int nextPosition)
-        {
-            List = list;
-            NextPosition = nextPosition;
-        }
-    }
-
-    private Stack<ListPosition> Positions { get; set; } = new();
-
-    private int Current { get; set; }
-    private bool CurrentFilled { get; set; } = false;
+    private Stack<NestedInteger> _stack { get; set; } = new();
 
     public NestedIterator(IList<NestedInteger> nestedList) {
-        Positions.Push(new ListPosition(nestedList, 0));
-    }
-
-    private void FillCurrent()
-    {
-        if (CurrentFilled)
+        for (int i = nestedList.Count - 1; i >= 0; i--)
         {
-            return;
-        }
-
-        while (true)
-        {
-            if (Positions.Count < 1)
-            {
-                return;
-            }
-            
-            var list = Positions.Peek().List;
-            var nextPosition = Positions.Peek().NextPosition;
-            
-            if (nextPosition >= list.Count)
-            {
-                Positions.Pop();
-                continue;
-            }
-
-            if (list[nextPosition].IsInteger())
-            {
-                Current = list[nextPosition].GetInteger();
-                CurrentFilled = true;
-                Positions.Peek().NextPosition++;
-                return;
-            }
-            Positions.Peek().NextPosition++;
-            Positions.Push(new ListPosition(list[nextPosition].GetList(), 0));
+            _stack.Push(nestedList[i]);
         }
     }
+    
     public bool HasNext()
     {
-        FillCurrent();
-        return CurrentFilled;
+        while (_stack.Count > 0)
+        {
+            var top = _stack.Peek();
+            if (top.IsInteger())
+            {
+                return true;
+            }
+
+            var topList = _stack.Pop().GetList();
+            for (int i = topList.Count - 1; i >= 0; i--)
+            {
+                _stack.Push(topList[i]);
+            }
+        }
+
+        return false;
     }
 
     public int Next() {
-        FillCurrent();
-        
-        if (CurrentFilled)
+        if (HasNext())
         {
-            CurrentFilled = false;
-            return Current;
+            return _stack.Pop().GetInteger();
         }
 
         throw new InvalidOperationException();
