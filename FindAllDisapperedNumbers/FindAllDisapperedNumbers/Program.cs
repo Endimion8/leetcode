@@ -1,11 +1,20 @@
 ﻿https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
 
-var inList = new List<int> {4, 2, 3, 3, 5, 1, 2};
-var set = new HashSet<int>(inList);
+var inArray = new[] {4, 2, 3, 3, 5, 1, 2};
 var outList = new List<int>();
-for (int i = 1; i <= inList.Count; i++)
+
+for (int i = 0; i < inArray.Length; i++)
 {
-    if (!set.Contains(i + 1))
+    var index = Math.Abs(inArray[i]) - 1;
+    if (inArray[index] > 0)
+    {
+        inArray[index] *= -1;
+    }
+}
+
+for (int i = 0; i < inArray.Length; i++)
+{
+    if (inArray[i] > 0)
     {
         outList.Add(i+1);
     }
