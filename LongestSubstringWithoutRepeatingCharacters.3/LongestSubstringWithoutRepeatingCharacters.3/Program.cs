@@ -1,5 +1,5 @@
 ﻿// https://leetcode.com/problems/longest-substring-without-repeating-characters/
-// Time O(n^2) = O(n(n+1)/2) Space O(1)
+// Time O(n) Space O(n)
 
 Console.WriteLine("Hello, World!");
 
@@ -8,21 +8,27 @@ int longestSubstring(string str)
 {
     var maxLength = 0;
     var n = str.Length;
-    var i = 0;
-
-    while (i < n)
+    if (n == 0)
     {
-        var j = i;
-        var visited = new bool[256];
-        while (j < n && visited[str[j]] == false)
+        return 0;
+    }
+
+    var hashSet = new HashSet<char>();
+    var i = 0;
+    var j = 0;
+
+    while (i < n && j < n)
+    {
+        if (hashSet.Add(str[j]))
         {
             maxLength = Math.Max(maxLength, j - i + 1);
-            visited[str[j]] = true;
             j++;
         }
-
-        visited[str[i]] = false;
-        i++;
+        else
+        {
+            hashSet.Remove(str[i]);
+            i++;
+        }
     }
 
     return maxLength;
