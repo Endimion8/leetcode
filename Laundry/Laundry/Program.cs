@@ -12,43 +12,30 @@
 // getTime([1, 2, 3], 3) → 3
 // getTime([3, 2, 1], 2) → 3
 
-int getTime(IReadOnlyCollection<int> times, int machinesCount)
+// O(MN)
+
+int getTime(IReadOnlyCollection<int> clientTimes, int machinesCount)
 {
-    var queue = new Queue<int>(times);
     var machines = new int[machinesCount];
-    var counter = 0;
-    
-    while (queue.Any() || machines.Any(x => x > 0))
+
+    foreach (var time in clientTimes)
     {
-        // назначаем клиентов свободным машинам
-        for (int i = 0; i < machines.Length; i++)
-        {
-            if (machines[i] > 0)
-            {
-                continue;
-            }
+        // находим машину с минимальным временем
+        var minMachineIndex = findMinMachineIndex(machines);
 
-            if (queue.TryDequeue(out var time))
-            {
-                machines[i] = time;
-            }
-        }
-        
-        // вычитаем один такт времени
-        for (int i = 0; i < machines.Length; i++)
-        {
-            if (machines[i] == 0)
-            {
-                continue;
-            }
-
-            machines[i]--;
-        }
-
-        counter++;
+        // добавляем к нему время следующего клиента
+        machines[minMachineIndex] += time;
     }
 
-    return counter;
+    // в результате получаем массив с полным временем загруженности машин.
+    // выбираем максимальное - это время, за которое вся очередь полностью постирается
+    return machines.Max();
+}
+
+int findMinMachineIndex(int[] machines)
+{
+    var min = machines.Min();
+    return Array.IndexOf(machines, min);
 }
 
 Console.WriteLine(getTime(new []{1, 2, 3}, 1)); // 6
